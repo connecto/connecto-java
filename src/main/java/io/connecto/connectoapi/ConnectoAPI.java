@@ -66,7 +66,7 @@ public class ConnectoAPI {
      * should be called in a separate thread or in a queue consumer.
      *
      * @param toSend a ClientDelivery containing a number of Connecto messages
-     * @throws IOException
+     * @throws IOException if its unable to parse messages
      * @see ClientDelivery
      */
     public void deliver(ClientDelivery toSend) throws IOException {
@@ -84,29 +84,31 @@ public class ConnectoAPI {
     }
 
     /**
-     * This api will get the user segment that is a list of rule matched
+     * This api will get the user segment that is a list of matched segment rules.
      *
+     * @param readKey an authorization key provided to you in Connecto admin
+     * @param userId a user id whose segments are being requested.
      */
 
-    public JSONArray getSegments(String mReadKey, String userId) throws IOException {
+    public SegmentResponse getSegments(String readKey, String userId) throws IOException {
         URL endpoint = new URL(mRulesEndPoint + userId);
         HttpURLConnection conn = (HttpURLConnection) endpoint.openConnection();
         conn.setRequestMethod("GET");
         conn.setReadTimeout(READ_TIMEOUT_MILLIS);
-        String basicAuth = getAuthorizationHeader(mReadKey);
+        String basicAuth = getAuthorizationHeader(readKey);
         conn.setRequestProperty("Authorization", basicAuth);
 
         InputStream responseStream = null;
-        String response = null;
-        JSONArray segments = null;
+        SegmentResponse segmentResponse = null;
         try {
             responseStream = conn.getInputStream();
-            response = slurp(responseStream);
+            String response = slurp(responseStream);
             try {
-                segments = new JSONArray(response);
+                JSONArray segments = new JSONArray(response);
+                segmentResponse = new SegmentResponse(segments);
             } catch (JSONException e) {
             }
-            return segments;
+            return segmentResponse;
         } finally {
             if (responseStream != null) {
                 try {

@@ -14,7 +14,7 @@ public class Segment {
      * @param jsonObject a payload of the segment returned via Connecto.
      * NaN and negative/positive infinity will throw an IllegalArgumentException
 
-     * @throws IOException if the jsonObject does not contain the required properties.
+     * @throws JSONException if the jsonObject does not contain the required properties.
      **/
     public Segment(JSONObject jsonObject) throws JSONException {
         this.mTitle = jsonObject.getString(TITLE_KEY);
@@ -22,10 +22,10 @@ public class Segment {
     }
 
     /* package */
-    private String getTitle() { return this.mTitle; }
+    public String getTitle() { return this.mTitle; }
 
     /* package */
-    private String getRuleId() { return this.mRuleId; }
+    public String getRuleId() { return this.mRuleId; }
 
     private String mTitle;
     private String mRuleId;
