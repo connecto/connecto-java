@@ -7,8 +7,6 @@ import org.json.JSONObject;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.List;
 
 /**
@@ -28,7 +26,8 @@ public class ConnectoAPI {
      * Constructs a ConnectoAPI object associated with the production, Connecto services.
      */
     public ConnectoAPI() {
-        this(Config.BASE_ENDPOINT + "/import", Config.BASE_ENDPOINT + "/api/rules?userId=");
+        this(Config.BASE_ENDPOINT + "/import", Config.BASE_ENDPOINT + "/api/rules?userId=",
+             DEFAULT_READ_TIMEOUT_MILLIS);
     }
 
     /**
@@ -39,9 +38,19 @@ public class ConnectoAPI {
      * @param endpoint a URL that will accept Connecto events and identify messages
      * @see #ConnectoAPI()
      */
-    public ConnectoAPI(String endpoint, String rulesendpoint) {
+    public ConnectoAPI(String endpoint, String rulesendpoint, int timeout) {
         mEventsEndpoint = endpoint;
         mRulesEndPoint = rulesendpoint;
+        mTimeoutMilliseconds = timeout;
+    }
+
+    /**
+     * Set timeout for HTTP cals.
+     *
+     * @param timeoutInMs an integer representing milliseconds
+     */
+    public void setTimeout(int timeoutInMs) {
+        mTimeoutMilliseconds = timeoutInMs;
     }
 
     /**
@@ -94,7 +103,8 @@ public class ConnectoAPI {
         URL endpoint = new URL(mRulesEndPoint + userId);
         HttpURLConnection conn = (HttpURLConnection) endpoint.openConnection();
         conn.setRequestMethod("GET");
-        conn.setReadTimeout(READ_TIMEOUT_MILLIS);
+        conn.setConnectTimeout(mTimeoutMilliseconds);
+        conn.setReadTimeout(mTimeoutMilliseconds);
         String basicAuth = getAuthorizationHeader(readKey);
         conn.setRequestProperty("Authorization", basicAuth);
 
@@ -127,7 +137,8 @@ public class ConnectoAPI {
     boolean sendData(String dataString, String endpointUrl) throws IOException {
         URL endpoint = new URL(endpointUrl);
         HttpURLConnection conn = (HttpURLConnection) endpoint.openConnection();
-        conn.setReadTimeout(READ_TIMEOUT_MILLIS);
+        conn.setConnectTimeout(mTimeoutMilliseconds);
+        conn.setReadTimeout(mTimeoutMilliseconds);
         conn.setDoOutput(true);
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/json");
@@ -215,8 +226,9 @@ public class ConnectoAPI {
 
     private final String mEventsEndpoint;
     private final String mRulesEndPoint;
+    private int mTimeoutMilliseconds;
 
     private static final int BUFFER_SIZE = 256; // Small, we expect small responses.
-    private static final int READ_TIMEOUT_MILLIS = 120000; // Two minutes should be more than enough for a response.
+    private static final int DEFAULT_READ_TIMEOUT_MILLIS = 120000; // Two minutes should be more than enough for a response.
 
 }

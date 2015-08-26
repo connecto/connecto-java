@@ -48,7 +48,7 @@ public class ConnectoAPITest
 
         final Map<String, String> sawData = new HashMap<String, String>();
 
-        ConnectoAPI api = new ConnectoAPI("http://localhost:3003/import", "http://localhost:3003/api/rules/") {
+        ConnectoAPI api = new ConnectoAPI("http://localhost:3003/import", "http://localhost:3003/api/rules/", 12000) {
             @Override
             public boolean sendData(String dataString, String endpointUrl) {
                 sawData.put(endpointUrl, dataString);
@@ -296,7 +296,7 @@ public class ConnectoAPITest
     }
 
     public void testEmptyDelivery() {
-        ConnectoAPI api = new ConnectoAPI("http://localhost:3003/import", "") {
+        ConnectoAPI api = new ConnectoAPI("http://localhost:3003/import", "", 12000) {
             @Override
             public boolean sendData(String dataString, String endpointUrl) {
                 fail("Data sent when no data should be sent");
@@ -315,7 +315,7 @@ public class ConnectoAPITest
     public void testLargeDelivery() {
         final List<String> sends = new ArrayList<String>();
 
-        ConnectoAPI api = new ConnectoAPI("http://localhost:3003/import", "") {
+        ConnectoAPI api = new ConnectoAPI("http://localhost:3003/import", "", 12000) {
             @Override
             public boolean sendData(String dataString, String endpointUrl) {
                 sends.add(dataString);

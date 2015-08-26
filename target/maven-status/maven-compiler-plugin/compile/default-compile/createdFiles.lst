@@ -1,0 +1,9 @@
+io/connecto/connectoapi/ClientDelivery.class
+io/connecto/connectoapi/ConnectoMessageException.class
+io/connecto/connectoapi/Segment.class
+io/connecto/connectoapi/MessageBuilder.class
+io/connecto/connectoapi/Config.class
+io/connecto/connectoapi/ConnectoAPI.class
+io/connecto/connectoapi/Base64Coder.class
+io/connecto/connectoapi/ConnectoServerException.class
+io/connecto/connectoapi/SegmentResponse.class
